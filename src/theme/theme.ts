@@ -1,4 +1,5 @@
-import { extendTheme } from '@chakra-ui/react'
+import { ComponentStyleConfig, extendTheme } from '@chakra-ui/react'
+import { Styles } from '@chakra-ui/theme-tools'
 
 const colors = {
 	foreground: {
@@ -17,7 +18,7 @@ const colors = {
 	},
 }
 
-const styles = {
+const styles: Styles = {
 	global: {
 		'*': {
 			margin: 0,
@@ -27,4 +28,19 @@ const styles = {
 	},
 }
 
-export const theme = extendTheme({ colors, styles })
+export const theme = extendTheme({
+	fonts: {
+		heading: 'Playfair Display Bold',
+		body: 'lato',
+	},
+	components: {
+		Container: {
+			baseStyle: {
+				d: 'flex',
+				maxW: 'container.xl',
+			},
+		},
+	},
+	colors,
+	styles,
+})
