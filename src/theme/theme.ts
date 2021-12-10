@@ -20,6 +20,9 @@ const colors = {
 
 const styles: Styles = {
 	global: {
+		':root': {
+			fontSize: '18px',
+		},
 		'*': {
 			margin: 0,
 			padding: 0,
