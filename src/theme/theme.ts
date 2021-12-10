@@ -17,4 +17,14 @@ const colors = {
 	},
 }
 
-export const theme = extendTheme({ colors })
+const styles = {
+	global: {
+		'*': {
+			margin: 0,
+			padding: 0,
+			boxSizing: 'border-box',
+		},
+	},
+}
+
+export const theme = extendTheme({ colors, styles })
