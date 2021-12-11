@@ -1,5 +1,5 @@
-import { Text, Heading, Flex, VStack, Box } from '@chakra-ui/layout'
-import { Button, FormLabel, Image } from '@chakra-ui/react'
+import { Text, VStack, Box } from '@chakra-ui/layout'
+import { Image, Button } from '@chakra-ui/react'
 import { Input } from '../../components/molecules/InputGroup'
 import { NextPage } from 'next'
 import { AuthTemplate } from '../../components/templates/AuthTemplate'
@@ -25,7 +25,9 @@ const LoginPage: NextPage = () => {
 					placeholder='***********'
 				/>
 
-				<Button isFullWidth>Login</Button>
+				<Button colorScheme='blue' isFullWidth>
+					Login
+				</Button>
 
 				<Box w='100%' textAlign='center' pt='1rem'>
 					<Text>Don&apos;t have an account?</Text>
