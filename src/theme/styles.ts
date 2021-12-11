@@ -3,7 +3,7 @@ import { Styles } from '@chakra-ui/theme-tools'
 export const styles: Styles = {
 	global: {
 		':root': {
-			fontSize: '20px',
+			fontSize: '14px',
 		},
 		'*': {
 			margin: 0,
