@@ -1,12 +1,49 @@
 import { Text, VStack, Box } from '@chakra-ui/layout'
-import { Image, Button } from '@chakra-ui/react'
+import { Image, Button, useToast } from '@chakra-ui/react'
 import { Input } from '../../components/molecules/InputGroup'
 import { NextPage } from 'next'
 import { AuthTemplate } from '../../components/templates/AuthTemplate'
 import { useRouter } from 'next/router'
+import { useFormik } from 'formik'
+import * as yup from 'yup'
+import { useAuth } from '../../contexts/AuthContext'
+
+const formSchema = yup.object().shape({
+	email: yup.string().email().required(),
+	password: yup.string().required(),
+})
 
 const LoginPage: NextPage = () => {
+	const toast = useToast()
 	const router = useRouter()
+	const { login } = useAuth()
+
+	const formik = useFormik({
+		initialValues: {
+			email: '',
+			password: '',
+		},
+		validationSchema: formSchema,
+		onSubmit: async values => {
+			const err = await login(values.email, values.password)
+
+			if (!err) {
+				toast({
+					title: 'Welcome back!',
+					duration: 3000,
+					status: 'success',
+				})
+				router.push('/')
+			} else {
+				toast({
+					title: err,
+					duration: 5000,
+					isClosable: true,
+					status: 'error',
+				})
+			}
+		},
+	})
 
 	return (
 		<AuthTemplate>
@@ -18,27 +55,38 @@ const LoginPage: NextPage = () => {
 				w='10rem'
 			/>
 
-			<VStack spacing='2rem' py='2rem'>
-				<Input label='Email' name='email' placeholder='example@email.com' />
+			<form onSubmit={formik.handleSubmit}>
+				<VStack spacing='2rem' py='4rem'>
+					<Input
+						label='Email'
+						name='email'
+						type='email'
+						placeholder='example@email.com'
+						onChange={formik.handleChange}
+						error={formik.errors.email}
+					/>
 
-				<Input
-					label='Password'
-					name='password'
-					type='password'
-					placeholder='***********'
-				/>
+					<Input
+						label='Password'
+						name='password'
+						type='password'
+						placeholder='***********'
+						onChange={formik.handleChange}
+						error={formik.errors.password}
+					/>
 
-				<Button colorScheme='blue' isFullWidth>
-					Login
-				</Button>
-
-				<Box w='100%' textAlign='center' pt='1rem'>
-					<Text>Don&apos;t have an account?</Text>
-					<Button onClick={() => router.push('/register')} isFullWidth>
-						Register
+					<Button type='submit' colorScheme='blue' isFullWidth>
+						Login
 					</Button>
-				</Box>
-			</VStack>
+
+					<Box w='100%' textAlign='center' pt='1rem'>
+						<Text>Don&apos;t have an account?</Text>
+						<Button onClick={() => router.push('/register')} isFullWidth>
+							Register
+						</Button>
+					</Box>
+				</VStack>
+			</form>
 		</AuthTemplate>
 	)
 }
