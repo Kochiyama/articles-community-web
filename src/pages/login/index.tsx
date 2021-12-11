@@ -3,11 +3,14 @@ import { Image, Button } from '@chakra-ui/react'
 import { Input } from '../../components/molecules/InputGroup'
 import { NextPage } from 'next'
 import { AuthTemplate } from '../../components/templates/AuthTemplate'
+import { useRouter } from 'next/router'
 
 const LoginPage: NextPage = () => {
+	const router = useRouter()
+
 	return (
 		<AuthTemplate>
-			<Text fontFamily='Playfair Display'>Welcome to</Text>
+			<Text fontFamily='Playfair Display'>Welcome back</Text>
 
 			<Image
 				src='/images/logo-complete.png'
@@ -31,7 +34,9 @@ const LoginPage: NextPage = () => {
 
 				<Box w='100%' textAlign='center' pt='1rem'>
 					<Text>Don&apos;t have an account?</Text>
-					<Button isFullWidth>Register</Button>
+					<Button onClick={() => router.push('/register')} isFullWidth>
+						Register
+					</Button>
 				</Box>
 			</VStack>
 		</AuthTemplate>
