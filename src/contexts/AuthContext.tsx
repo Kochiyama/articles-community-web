@@ -7,6 +7,7 @@ import {
 } from 'react'
 import { setCookie, parseCookies } from 'nookies'
 import { api } from '../utils/api'
+import { cookieSettings } from '../constants/cookies'
 
 interface AuthProviderProps {
 	children: ReactNode
@@ -21,8 +22,6 @@ type AuthContextData = {
 export const AuthContext = createContext({} as AuthContextData)
 
 export function AuthProvider({ children }: AuthProviderProps) {
-	const TOKEN_KEY = '@articles_community_usr_token'
-
 	const [isLoading, setIsLoading] = useState(true)
 	const [isLogged, setIsLogged] = useState(false)
 
@@ -31,7 +30,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 	}, [])
 
 	const loadLocalData = () => {
-		const token = parseCookies()[TOKEN_KEY]
+		const token = parseCookies()[cookieSettings.TOKEN_KEY]
 
 		if (token) {
 			setIsLogged(true)
@@ -61,7 +60,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 			api.defaults.headers.common.Authorization = `Bearer ${token}`
 
 			// Armazenar o token em um cookie
-			setCookie(null, TOKEN_KEY, token, token_config)
+			setCookie(null, cookieSettings.TOKEN_KEY, token, token_config)
 		} catch (err: any) {
 			return err.response.data.message
 		}

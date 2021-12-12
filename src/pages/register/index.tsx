@@ -1,8 +1,10 @@
 import { VStack, Text, Image, Button, Box } from '@chakra-ui/react'
 import { Input } from '../../components/molecules/InputGroup'
-import { NextPage } from 'next'
+import { GetServerSideProps, NextPage } from 'next'
 import { AuthTemplate } from '../../components/templates/AuthTemplate'
 import { useRouter } from 'next/router'
+import { cookieSettings } from '../../constants/cookies'
+import { parseCookies } from 'nookies'
 
 const RegisterPage: NextPage = () => {
 	const router = useRouter()
@@ -47,6 +49,23 @@ const RegisterPage: NextPage = () => {
 			</VStack>
 		</AuthTemplate>
 	)
+}
+
+export const getServerSideProps: GetServerSideProps = async ctx => {
+	const token = parseCookies(ctx)[cookieSettings.TOKEN_KEY]
+
+	if (token) {
+		return {
+			redirect: {
+				destination: '/',
+				permanent: false,
+			},
+		}
+	}
+
+	return {
+		props: {},
+	}
 }
 
 export default RegisterPage

@@ -1,12 +1,14 @@
 import { Text, VStack, Box } from '@chakra-ui/layout'
 import { Image, Button, useToast } from '@chakra-ui/react'
 import { Input } from '../../components/molecules/InputGroup'
-import { NextPage } from 'next'
+import { GetServerSideProps, NextPage } from 'next'
 import { AuthTemplate } from '../../components/templates/AuthTemplate'
 import { useRouter } from 'next/router'
 import { useFormik } from 'formik'
 import * as yup from 'yup'
 import { useAuth } from '../../contexts/AuthContext'
+import { cookieSettings } from '../../constants/cookies'
+import { parseCookies } from 'nookies'
 
 const formSchema = yup.object().shape({
 	email: yup.string().email().required(),
@@ -89,6 +91,23 @@ const LoginPage: NextPage = () => {
 			</form>
 		</AuthTemplate>
 	)
+}
+
+export const getServerSideProps: GetServerSideProps = async ctx => {
+	const token = parseCookies(ctx)[cookieSettings.TOKEN_KEY]
+
+	if (token) {
+		return {
+			redirect: {
+				destination: '/',
+				permanent: false,
+			},
+		}
+	}
+
+	return {
+		props: {},
+	}
 }
 
 export default LoginPage
