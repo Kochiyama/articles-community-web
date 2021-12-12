@@ -5,16 +5,19 @@ import {
 	useEffect,
 	useState,
 } from 'react'
-import { setCookie, parseCookies } from 'nookies'
+import { setCookie, parseCookies, destroyCookie } from 'nookies'
 import { api } from '../utils/api'
 import { cookieSettings } from '../constants/cookies'
+import { useRouter } from 'next/router'
+import { useToast } from '@chakra-ui/react'
 
 interface AuthProviderProps {
 	children: ReactNode
 }
 
 type AuthContextData = {
-	login: (email: string, password: string) => Promise<string | undefined>
+	login: (email: string, password: string) => Promise<void>
+	logout: () => void
 	isLoading: boolean
 	isLogged: boolean
 }
@@ -24,6 +27,9 @@ export const AuthContext = createContext({} as AuthContextData)
 export function AuthProvider({ children }: AuthProviderProps) {
 	const [isLoading, setIsLoading] = useState(true)
 	const [isLogged, setIsLogged] = useState(false)
+
+	const router = useRouter()
+	const toast = useToast()
 
 	useEffect(() => {
 		loadLocalData()
@@ -40,10 +46,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 		setIsLoading(false)
 	}
 
-	const login = async (
-		email: string,
-		password: string
-	): Promise<string | undefined> => {
+	const login = async (email: string, password: string): Promise<void> => {
 		const token_config = {
 			maxAge: 7 * 24 * 60 * 60, // Dias x horas x minutos x segundos = ms
 			path: '/',
@@ -59,16 +62,33 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
 			api.defaults.headers.common.Authorization = `Bearer ${token}`
 
-			// Armazenar o token em um cookie
+			// Store the user jwt as a cookie
 			setCookie(null, cookieSettings.TOKEN_KEY, token, token_config)
+
+			toast({
+				title: 'Welcome back!',
+				duration: 3000,
+				status: 'success',
+			})
 		} catch (err: any) {
-			return err.response.data.message
+			toast({
+				title: err.response.data.message,
+				duration: 5000,
+				isClosable: true,
+				status: 'error',
+			})
 		}
-		return
+
+		router.push('/')
+	}
+
+	const logout = async () => {
+		destroyCookie(null, cookieSettings.TOKEN_KEY)
+		router.push('/login')
 	}
 
 	return (
-		<AuthContext.Provider value={{ login, isLoading, isLogged }}>
+		<AuthContext.Provider value={{ login, logout, isLoading, isLogged }}>
 			{children}
 		</AuthContext.Provider>
 	)

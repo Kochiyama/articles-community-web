@@ -16,8 +16,8 @@ const formSchema = yup.object().shape({
 })
 
 const LoginPage: NextPage = () => {
-	const toast = useToast()
 	const router = useRouter()
+
 	const { login } = useAuth()
 
 	const formik = useFormik({
@@ -27,23 +27,7 @@ const LoginPage: NextPage = () => {
 		},
 		validationSchema: formSchema,
 		onSubmit: async values => {
-			const err = await login(values.email, values.password)
-
-			if (!err) {
-				toast({
-					title: 'Welcome back!',
-					duration: 3000,
-					status: 'success',
-				})
-				router.push('/')
-			} else {
-				toast({
-					title: err,
-					duration: 5000,
-					isClosable: true,
-					status: 'error',
-				})
-			}
+			login(values.email, values.password)
 		},
 	})
 
