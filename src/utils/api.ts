@@ -1,6 +1,5 @@
 import axios from 'axios'
 
-console.log(process.env.NODE_ENV)
 let baseURL = ''
 
 switch (process.env.NODE_ENV) {
