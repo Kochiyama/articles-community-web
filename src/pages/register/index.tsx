@@ -1,13 +1,39 @@
-import { VStack, Text, Image, Button, Box } from '@chakra-ui/react'
+import { VStack, Text, Image, Button, Box, useToast } from '@chakra-ui/react'
 import { Input } from '../../components/molecules/InputGroup'
 import { GetServerSideProps, NextPage } from 'next'
 import { AuthTemplate } from '../../components/templates/AuthTemplate'
 import { useRouter } from 'next/router'
 import { cookieSettings } from '../../constants/cookies'
 import { parseCookies } from 'nookies'
+import { useFormik } from 'formik'
+import * as yup from 'yup'
+import { api } from '../../utils/api'
+import { useAuth } from '../../contexts/AuthContext'
+
+const formSchema = yup.object().shape({
+	email: yup.string().required().email(),
+	password: yup.string().required(),
+	passwordConfirmation: yup
+		.string()
+		.oneOf([yup.ref('password')], 'Passwords must match'),
+})
 
 const RegisterPage: NextPage = () => {
 	const router = useRouter()
+	const toast = useToast()
+	const { register } = useAuth()
+
+	const formik = useFormik({
+		initialValues: {
+			name: '',
+			email: '',
+			password: '',
+		},
+		validationSchema: formSchema,
+		onSubmit: async values => {
+			register(values.name, values.email, values.password)
+		},
+	})
 
 	return (
 		<AuthTemplate>
@@ -19,34 +45,45 @@ const RegisterPage: NextPage = () => {
 				w='10rem'
 			/>
 
-			<VStack spacing='2rem' py='2rem'>
-				<Input label='Email' name='email' placeholder='example@email.com' />
+			<form onSubmit={formik.handleSubmit}>
+				<VStack spacing='2rem' py='2rem'>
+					<Input
+						label='Name'
+						name='name'
+						placeholder='Your Full Name'
+						onChange={formik.handleChange}
+						error={formik.errors.name}
+					/>
 
-				<Input
-					label='Password'
-					name='password'
-					type='password'
-					placeholder='***********'
-				/>
+					<Input
+						label='Email'
+						name='email'
+						placeholder='example@email.com'
+						onChange={formik.handleChange}
+						error={formik.errors.email}
+					/>
 
-				<Input
-					label='Password confirmation'
-					name='passwordConfirmation'
-					type='password'
-					placeholder='***********'
-				/>
+					<Input
+						label='Password'
+						name='password'
+						type='password'
+						placeholder='***********'
+						onChange={formik.handleChange}
+						error={formik.errors.password}
+					/>
 
-				<Button colorScheme='blue' isFullWidth>
-					Create Account
-				</Button>
-
-				<Box w='100%' textAlign='center'>
-					<Text>Don&apos;t have an account?</Text>
-					<Button onClick={() => router.push('login')} isFullWidth>
-						login with credentials
+					<Button type='submit' colorScheme='blue' isFullWidth>
+						Create Account
 					</Button>
-				</Box>
-			</VStack>
+
+					<Box w='100%' textAlign='center'>
+						<Text>Already have an account?</Text>
+						<Button onClick={() => router.push('login')} isFullWidth>
+							login with credentials
+						</Button>
+					</Box>
+				</VStack>
+			</form>
 		</AuthTemplate>
 	)
 }
