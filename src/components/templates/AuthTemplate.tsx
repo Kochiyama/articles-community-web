@@ -22,6 +22,7 @@ export const AuthTemplate = ({ children }: Props) => {
 			{isWideVersion && (
 				<Flex flex='2'>
 					<Image
+						objectFit='cover'
 						src='/images/glenn-carstens-peters-npxXWgQ33ZQ-unsplash.png'
 						alt='Image by Glenn Carstens Peters Unsplash'
 					/>
