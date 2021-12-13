@@ -13,10 +13,11 @@ interface Props extends InputProps {
 	label?: string
 	error?: string | undefined
 	password?: boolean
+	touched?: boolean
 }
 
 const InputBase: ForwardRefRenderFunction<HTMLInputElement, Props> = (
-	{ label, name, error, ...rest },
+	{ label, name, error, touched, ...rest },
 	ref
 ) => {
 	return (
@@ -26,7 +27,7 @@ const InputBase: ForwardRefRenderFunction<HTMLInputElement, Props> = (
 			</FormLabel>
 
 			<ChakraInput
-				isInvalid={error ? true : false}
+				isInvalid={error && touched ? true : false}
 				id={name}
 				name={name}
 				ref={ref}
@@ -34,7 +35,7 @@ const InputBase: ForwardRefRenderFunction<HTMLInputElement, Props> = (
 				{...rest}
 			/>
 
-			{error && (
+			{error && touched && (
 				<Text w='100%' color='error.100' mt='0.5rem'>
 					{error}
 				</Text>

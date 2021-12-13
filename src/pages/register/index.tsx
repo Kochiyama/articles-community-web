@@ -53,6 +53,7 @@ const RegisterPage: NextPage = () => {
 						placeholder='Your Full Name'
 						onChange={formik.handleChange}
 						error={formik.errors.name}
+						touched={formik.touched.name}
 					/>
 
 					<Input
@@ -61,6 +62,7 @@ const RegisterPage: NextPage = () => {
 						placeholder='example@email.com'
 						onChange={formik.handleChange}
 						error={formik.errors.email}
+						touched={formik.touched.email}
 					/>
 
 					<Input
@@ -70,6 +72,7 @@ const RegisterPage: NextPage = () => {
 						placeholder='***********'
 						onChange={formik.handleChange}
 						error={formik.errors.password}
+						touched={formik.touched.password}
 					/>
 
 					<Button type='submit' colorScheme='blue' isFullWidth>
