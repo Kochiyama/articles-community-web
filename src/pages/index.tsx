@@ -1,6 +1,5 @@
 import { Button, Center, Image } from '@chakra-ui/react'
 import type { GetServerSideProps, NextPage } from 'next'
-import Head from 'next/head'
 import { parseCookies } from 'nookies'
 import { cookieSettings } from '../constants/cookies'
 import { useAuth } from '../contexts/AuthContext'

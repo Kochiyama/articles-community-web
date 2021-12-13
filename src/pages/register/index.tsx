@@ -7,7 +7,6 @@ import { cookieSettings } from '../../constants/cookies'
 import { parseCookies } from 'nookies'
 import { useFormik } from 'formik'
 import * as yup from 'yup'
-import { api } from '../../utils/api'
 import { useAuth } from '../../contexts/AuthContext'
 
 const formSchema = yup.object().shape({

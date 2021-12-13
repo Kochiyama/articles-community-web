@@ -1,5 +1,5 @@
 import { Text, VStack, Box } from '@chakra-ui/layout'
-import { Image, Button, useToast } from '@chakra-ui/react'
+import { Image, Button } from '@chakra-ui/react'
 import { Input } from '../../components/molecules/InputGroup'
 import { GetServerSideProps, NextPage } from 'next'
 import { AuthTemplate } from '../../components/templates/AuthTemplate'

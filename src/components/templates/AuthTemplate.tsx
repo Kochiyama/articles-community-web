@@ -1,10 +1,4 @@
-import {
-	Center,
-	Container,
-	Flex,
-	Image,
-	useBreakpointValue,
-} from '@chakra-ui/react'
+import { Center, Flex, Image, useBreakpointValue } from '@chakra-ui/react'
 import { ReactNode } from 'react'
 
 interface Props {

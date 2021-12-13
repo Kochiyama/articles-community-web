@@ -3,7 +3,6 @@ import {
 	Input as ChakraInput,
 	InputProps,
 	InputGroup,
-	FormHelperText,
 	Text,
 } from '@chakra-ui/react'
 import { forwardRef, ForwardRefRenderFunction, useEffect } from 'react'
