@@ -57,72 +57,83 @@ export function AuthProvider({ children }: AuthProviderProps) {
 		email: string,
 		password: string
 	): Promise<void> => {
-		try {
-			await api.post('/user', {
-				name,
-				email,
-				password,
-			})
+		return new Promise(async resolve => {
+			try {
+				await api.post('/user', {
+					name,
+					email,
+					password,
+				})
 
-			const response = await api.post('/auth/login', {
-				email,
-				password,
-			})
+				const response = await api.post('/auth/login', {
+					email,
+					password,
+				})
 
-			const token = response.data.access_token
+				const token = response.data.access_token
 
-			api.defaults.headers.common.Authorization = `Bearer ${token}`
+				api.defaults.headers.common.Authorization = `Bearer ${token}`
 
-			// Store the user jwt as a cookie
-			setCookie(null, cookieSettings.TOKEN_KEY, token, token_config)
+				// Store the user jwt as a cookie
+				setCookie(null, cookieSettings.TOKEN_KEY, token, token_config)
 
-			toast({
-				title: 'Welcome to Articles Community!',
-				duration: 5000,
-				isClosable: true,
-				status: 'success',
-			})
-		} catch (err: any) {
-			toast({
-				title: err.response.data.message,
-				duration: 5000,
-				isClosable: true,
-				status: 'error',
-			})
-		}
-
-		router.push('/')
+				toast({
+					title: 'Welcome to Articles Community!',
+					duration: 5000,
+					isClosable: true,
+					status: 'success',
+				})
+			} catch (err: any) {
+				toast({
+					title: err.response.data.message,
+					duration: 5000,
+					isClosable: true,
+					status: 'error',
+				})
+			} finally {
+				router.push('/')
+				resolve()
+			}
+		})
 	}
 
 	const login = async (email: string, password: string): Promise<void> => {
-		try {
-			const response = await api.post('/auth/login', {
-				email,
-				password,
-			})
+		// We are returning a promise, beacuse the rest of the code will wait until
+		// the promise is resolved, when the login is finished. Very important, so
+		// our button knows when to stop loading 🔁
+		return new Promise(async resolve => {
+			try {
+				const response = await api.post('/auth/login', {
+					email,
+					password,
+				})
 
-			const token = response.data.access_token
+				const token = response.data.access_token
 
-			api.defaults.headers.common.Authorization = `Bearer ${token}`
+				// Set a default header for the authenticated requisitions
+				api.defaults.headers.common.Authorization = `Bearer ${token}`
 
-			// Store the user jwt as a cookie
-			setCookie(null, cookieSettings.TOKEN_KEY, token, token_config)
+				// Store the user jwt as a cookie
+				setCookie(null, cookieSettings.TOKEN_KEY, token, token_config)
 
-			toast({
-				title: 'Welcome back!',
-				duration: 3000,
-				status: 'success',
-			})
+				toast({
+					title: 'Welcome back!',
+					duration: 3000,
+					status: 'success',
+				})
 
-			router.push('/')
-		} catch (err: any) {
-			toast({
-				title: err.response.data.message,
-				duration: 5000,
-				isClosable: true,
-				status: 'error',
-			})
-		}
+				router.push('/')
+			} catch (err: any) {
+				toast({
+					title: err.response.data.message,
+					duration: 5000,
+					isClosable: true,
+					status: 'error',
+				})
+			} finally {
+				resolve()
+			}
+		})
 	}
 
 	const logout = async () => {
