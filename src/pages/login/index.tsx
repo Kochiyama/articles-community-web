@@ -9,6 +9,7 @@ import * as yup from 'yup'
 import { useAuth } from '../../contexts/AuthContext'
 import { cookieSettings } from '../../constants/cookies'
 import { parseCookies } from 'nookies'
+import { useState } from 'react'
 
 const formSchema = yup.object().shape({
 	email: yup.string().email().required(),
@@ -16,6 +17,8 @@ const formSchema = yup.object().shape({
 })
 
 const LoginPage: NextPage = () => {
+	const [isLoading, setIsLoading] = useState(false)
+
 	const router = useRouter()
 
 	const { login } = useAuth()
@@ -27,7 +30,9 @@ const LoginPage: NextPage = () => {
 		},
 		validationSchema: formSchema,
 		onSubmit: async values => {
-			login(values.email, values.password)
+			setIsLoading(true)
+			await login(values.email, values.password)
+			setIsLoading(false)
 		},
 	})
 
@@ -61,7 +66,12 @@ const LoginPage: NextPage = () => {
 						error={formik.errors.password}
 					/>
 
-					<Button type='submit' colorScheme='blue' isFullWidth>
+					<Button
+						isLoading={isLoading}
+						type='submit'
+						colorScheme='blue'
+						isFullWidth
+					>
 						Login
 					</Button>
 

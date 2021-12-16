@@ -8,6 +8,7 @@ import { parseCookies } from 'nookies'
 import { useFormik } from 'formik'
 import * as yup from 'yup'
 import { useAuth } from '../../contexts/AuthContext'
+import { useState } from 'react'
 
 const formSchema = yup.object().shape({
 	email: yup.string().required().email(),
@@ -18,6 +19,8 @@ const formSchema = yup.object().shape({
 })
 
 const RegisterPage: NextPage = () => {
+	const [isLoading, setIsLoading] = useState(false)
+
 	const router = useRouter()
 	const toast = useToast()
 	const { register } = useAuth()
@@ -30,7 +33,9 @@ const RegisterPage: NextPage = () => {
 		},
 		validationSchema: formSchema,
 		onSubmit: async values => {
-			register(values.name, values.email, values.password)
+			setIsLoading(true)
+			await register(values.name, values.email, values.password)
+			setIsLoading(false)
 		},
 	})
 
