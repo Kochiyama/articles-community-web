@@ -10,6 +10,7 @@ import { api } from '../utils/api'
 import { cookieSettings } from '../constants/cookies'
 import { useRouter } from 'next/router'
 import { useToast } from '@chakra-ui/react'
+import { User } from '../interfaces/User'
 
 interface AuthProviderProps {
 	children: ReactNode
@@ -19,8 +20,8 @@ type AuthContextData = {
 	register: (name: string, email: string, password: string) => Promise<void>
 	login: (email: string, password: string) => Promise<void>
 	logout: () => void
+	user: User | undefined
 	isLoading: boolean
-	isLogged: boolean
 }
 
 export const AuthContext = createContext({} as AuthContextData)
@@ -32,7 +33,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 	}
 
 	const [isLoading, setIsLoading] = useState(true)
-	const [isLogged, setIsLogged] = useState(false)
+	const [user, setUser] = useState<User>()
 
 	const router = useRouter()
 	const toast = useToast()
@@ -43,12 +44,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
 	const loadLocalData = () => {
 		const token = parseCookies()[cookieSettings.TOKEN_KEY]
+		const user = parseCookies()[cookieSettings.USER_KEY]
 
-		if (token) {
-			setIsLogged(true)
-		} else {
-			setIsLogged(false)
+		if (token && user) {
+			setUser(JSON.parse(user))
 		}
+
 		setIsLoading(false)
 	}
 
@@ -103,18 +104,30 @@ export function AuthProvider({ children }: AuthProviderProps) {
 		// our button knows when to stop loading 🔁
 		return new Promise(async resolve => {
 			try {
-				const response = await api.post('/auth/login', {
-					email,
-					password,
-				})
+				const response = await api.post<{ user: User; access_token: string }>(
+					'/auth/login',
+					{
+						email,
+						password,
+					}
+				)
 
 				const token = response.data.access_token
+				const user = response.data.user
 
 				// Set a default header for the authenticated requisitions
 				api.defaults.headers.common.Authorization = `Bearer ${token}`
 
-				// Store the user jwt as a cookie
+				// Store the user & jwt as cookies
 				setCookie(null, cookieSettings.TOKEN_KEY, token, token_config)
+				setCookie(
+					null,
+					cookieSettings.USER_KEY,
+					JSON.stringify(user),
+					token_config
+				)
+
+				setUser(user)
 
 				toast({
 					title: 'Welcome back!',
@@ -142,9 +155,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 	}
 
 	return (
-		<AuthContext.Provider
-			value={{ register, login, logout, isLoading, isLogged }}
-		>
+		<AuthContext.Provider value={{ register, login, logout, isLoading, user }}>
 			{children}
 		</AuthContext.Provider>
 	)
