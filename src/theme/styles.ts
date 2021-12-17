@@ -10,5 +10,8 @@ export const styles: Styles = {
 			padding: 0,
 			boxSizing: 'border-box',
 		},
+		body: {
+			bgColor: '#f8f8f8',
+		},
 	},
 }
